@@ -1,0 +1,19 @@
+{
+  "name": "jelez-beton-platform",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:client": "npm run dev -w @jelez/client",
+    "dev:admin": "npm run dev -w @jelez/admin",
+    "dev:server": "npm run start:dev -w @jelez/server",
+    "build": "npm run build -ws",
+    "lint": "npm run lint -ws",
+    "prisma:generate": "npm run prisma:generate -w @jelez/server",
+    "prisma:migrate": "npm run prisma:migrate -w @jelez/server",
+    "prisma:seed": "npm run prisma:seed -w @jelez/server"
+  }
+}
