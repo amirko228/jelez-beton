@@ -213,20 +213,27 @@ export default function HomePage() {
                   </svg>
                 </div>
                 <p className="mt-4 text-lg font-bold text-white">Заявка отправлена!</p>
-                <p className="mt-1 text-sm text-gray-400">Мы свяжемся с вами в ближайшее время</p>
-                <button onClick={() => setSent(false)} className="mt-4 text-sm font-medium text-accent hover:underline">Отправить ещё</button>
+                <p className="mt-1 text-sm text-gray-400">Менеджер свяжется с вами в ближайшее время</p>
+                <button onClick={() => setSent(false)} className="mt-4 text-sm font-medium text-accent hover:underline">Отправить ещё заявку</button>
               </motion.div>
             ) : (
               <form
                 className="mt-8 grid gap-3"
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  const fd = new FormData(e.currentTarget);
+                  const form = e.currentTarget;
+                  const fd = new FormData(form);
                   try {
                     setSending(true);
-                    await createLead({ name: String(fd.get("name")), phone: String(fd.get("phone")), message: String(fd.get("message")) });
-                    e.currentTarget.reset();
+                    await createLead({
+                      name: String(fd.get("name") || ""),
+                      phone: String(fd.get("phone") || ""),
+                      message: String(fd.get("message") || "")
+                    });
+                    form.reset();
                     setSent(true);
+                  } catch (err) {
+                    alert("Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.");
                   } finally {
                     setSending(false);
                   }

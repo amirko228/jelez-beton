@@ -69,9 +69,9 @@ export default function AdminPage() {
       getCategories().catch(() => []),
       getProducts().catch(() => [])
     ]);
-    setLeads(leadItems);
-    setCategories(categoryItems);
-    setProducts(productItems);
+    setLeads(Array.isArray(leadItems) ? leadItems : []);
+    setCategories(Array.isArray(categoryItems) ? categoryItems : []);
+    setProducts(Array.isArray(productItems) ? productItems : []);
   }
 
   useEffect(() => {
@@ -80,6 +80,13 @@ export default function AdminPage() {
     setToken(saved);
     void refreshData(saved);
   }, []);
+
+  // Автообновление каждые 15 секунд, чтобы новые заявки появлялись сами
+  useEffect(() => {
+    if (!token) return;
+    const interval = setInterval(() => void refreshData(token), 15000);
+    return () => clearInterval(interval);
+  }, [token]);
 
   // Login screen
   if (!token) {
@@ -204,15 +211,29 @@ export default function AdminPage() {
 
       {/* Main content */}
       <main style={{ flex: 1, padding: 28, overflowY: "auto" }}>
-        <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>
-            {tabs.find((t) => t.key === activeTab)?.label}
-          </h1>
-          <p style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>
-            {activeTab === "leads" && "Входящие заявки с сайта"}
-            {activeTab === "categories" && "Управление категориями продукции"}
-            {activeTab === "products" && "Управление товарами каталога"}
-          </p>
+        <div style={{ marginBottom: 24, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>
+              {tabs.find((t) => t.key === activeTab)?.label}
+            </h1>
+            <p style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>
+              {activeTab === "leads" && "Входящие заявки с сайта — обновляются автоматически каждые 15 секунд"}
+              {activeTab === "categories" && "Управление категориями продукции"}
+              {activeTab === "products" && "Управление товарами каталога"}
+            </p>
+          </div>
+          <button
+            onClick={() => void refreshData(token)}
+            style={{
+              display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 10,
+              border: "1px solid #e2e8f0", background: "#fff", color: "#475569", fontWeight: 600, fontSize: 13, cursor: "pointer", flexShrink: 0
+            }}
+          >
+            <svg style={{ width: 14, height: 14 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Обновить
+          </button>
         </div>
 
         {/* LEADS */}

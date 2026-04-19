@@ -1,5 +1,14 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
+async function safeJson<T>(res: Response, fallback: T): Promise<T> {
+  if (!res.ok) return fallback;
+  try {
+    return (await res.json()) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function login(email: string, password: string) {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -14,17 +23,17 @@ export async function getLeads(token: string) {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store"
   });
-  return response.json();
+  return safeJson<any[]>(response, []);
 }
 
 export async function getProducts() {
   const response = await fetch(`${API_URL}/products`, { cache: "no-store" });
-  return response.json();
+  return safeJson<any[]>(response, []);
 }
 
 export async function getCategories() {
   const response = await fetch(`${API_URL}/categories`, { cache: "no-store" });
-  return response.json();
+  return safeJson<any[]>(response, []);
 }
 
 export async function createCategory(token: string, payload: { name: string; slug: string; description?: string }) {
@@ -41,7 +50,7 @@ export async function deleteCategory(token: string, id: string) {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` }
   });
-  return response.json();
+  return safeJson<unknown>(response, null);
 }
 
 export async function createProduct(
@@ -61,5 +70,5 @@ export async function deleteProduct(token: string, id: string) {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` }
   });
-  return response.json();
+  return safeJson<unknown>(response, null);
 }
