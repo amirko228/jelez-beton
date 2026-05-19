@@ -80,6 +80,19 @@ GET /api/leads
 Authorization: Bearer <jwt>
 ```
 
+## Деплой на сервер
+
+Пошаговая инструкция: [DEPLOY.md](./DEPLOY.md)
+
+Кратко на VPS:
+
+```bash
+git clone https://github.com/amirko228/jelez-beton.git
+cd jelez-beton
+cp .env.production.example .env   # отредактировать под домен/IP
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
 ## SEO и производительность
 
 - Next.js App Router + `metadata`

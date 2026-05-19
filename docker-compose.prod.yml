@@ -1,0 +1,8 @@
+# Production override: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+services:
+  db:
+    ports: []
+
+  nginx:
+    ports:
+      - "80:80"

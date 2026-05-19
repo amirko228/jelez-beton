@@ -36,6 +36,8 @@ services:
     build:
       context: .
       dockerfile: apps/client/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
     restart: unless-stopped
     env_file:
       - .env
@@ -51,6 +53,8 @@ services:
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
     restart: unless-stopped
     env_file:
       - .env
