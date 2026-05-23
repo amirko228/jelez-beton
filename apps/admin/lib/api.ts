@@ -1,4 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+function getApiUrl() {
+  // В браузере всегда тот же домен, что и админка → /api через nginx (без localhost в проде).
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api`;
+  }
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+}
 
 async function safeJson<T>(res: Response, fallback: T): Promise<T> {
   if (!res.ok) return fallback;
@@ -10,6 +16,7 @@ async function safeJson<T>(res: Response, fallback: T): Promise<T> {
 }
 
 export async function login(email: string, password: string) {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -19,6 +26,7 @@ export async function login(email: string, password: string) {
 }
 
 export async function getLeads(token: string) {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/leads`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store"
@@ -27,16 +35,19 @@ export async function getLeads(token: string) {
 }
 
 export async function getProducts() {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/products`, { cache: "no-store" });
   return safeJson<any[]>(response, []);
 }
 
 export async function getCategories() {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/categories`, { cache: "no-store" });
   return safeJson<any[]>(response, []);
 }
 
 export async function createCategory(token: string, payload: { name: string; slug: string; description?: string }) {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/categories`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -46,6 +57,7 @@ export async function createCategory(token: string, payload: { name: string; slu
 }
 
 export async function deleteCategory(token: string, id: string) {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/categories/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` }
@@ -57,6 +69,7 @@ export async function createProduct(
   token: string,
   payload: { title: string; slug: string; description: string; price: string; categoryId: string; specs: string; isPublished: boolean }
 ) {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/products`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -66,6 +79,7 @@ export async function createProduct(
 }
 
 export async function deleteProduct(token: string, id: string) {
+  const API_URL = getApiUrl();
   const response = await fetch(`${API_URL}/products/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` }
